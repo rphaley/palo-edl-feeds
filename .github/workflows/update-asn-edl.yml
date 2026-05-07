@@ -2,8 +2,8 @@ name: Update Palo ASN EDL
 
 on:
   schedule:
-    # Every 6 hours, offset from the top of the hour
-    - cron: "17 5 * * *"
+    # Every 24 hours, offset from the top of the hour
+    - cron: "0 8 * * *"
   workflow_dispatch:
 
 permissions:
