@@ -1,0 +1,74 @@
+name: Update Palo ASN EDL
+
+on:
+  schedule:
+    # Every 6 hours, offset from the top of the hour
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-edl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Build ASN EDL from RIPEstat
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ASNS="63949 14061 20473 24940 16276 51167 9009 53667 212238"
+
+          TMP_FILE="$(mktemp)"
+          OUT_FILE="palo-asn-edl.txt"
+
+          : > "$TMP_FILE"
+
+          for asn in $ASNS; do
+            echo "Fetching AS${asn}..."
+            curl -fsS "https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS${asn}" \
+              | jq -r '.data.prefixes[].prefix' >> "$TMP_FILE"
+          done
+
+          grep -E '^[0-9a-fA-F:.]+/[0-9]+$' "$TMP_FILE" \
+            | sort -u > "$OUT_FILE"
+
+          echo "Generated $(wc -l < "$OUT_FILE") prefixes."
+
+          {
+            echo "# Palo Alto ASN EDL"
+            echo
+            echo "Auto-generated from RIPEstat announced prefixes."
+            echo
+            echo "ASNs:"
+            echo
+            for asn in $ASNS; do
+              echo "- AS${asn}"
+            done
+            echo
+            echo "Last updated UTC: $(date -u '+%Y-%m-%d %H:%M:%S')"
+            echo
+            echo "Prefix count: $(wc -l < "$OUT_FILE")"
+          } > README.md
+
+      - name: Commit updated EDL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add palo-asn-edl.txt README.md
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update Palo ASN EDL"
+            git push
+          fi
