@@ -14,6 +14,6 @@ ASNs:
 - AS53667
 - AS212238
 
-Last updated UTC: 2026-05-08 09:16:20
+Last updated UTC: 2026-05-09 09:16:29
 
-Prefix count: 15027
+Prefix count: 14993
