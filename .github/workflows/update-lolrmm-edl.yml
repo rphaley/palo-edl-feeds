@@ -1,0 +1,79 @@
+name: Update LOLRMM RMM Domain EDL
+
+on:
+  schedule:
+    # Every 24 hours, offset from the ASN job
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-edl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Build RMM Domain EDL from LOLRMM
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p lolrmm
+
+          OUT_FILE="lolrmm/lolrmm-domains-edl.txt"
+          TMP_FILE="$(mktemp)"
+
+          echo "Fetching LOLRMM tool data..."
+          curl -fsS "https://lolrmm.io/api/rmm_tools.json" \
+            | jq -r '
+                .[].Artifacts.Network[]?
+                | .Domains[]?
+              ' \
+            | tr '[:upper:]' '[:lower:]' \
+            | grep -E '^([a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$' \
+            | sort -u > "$TMP_FILE"
+
+          DOMAIN_COUNT=$(wc -l < "$TMP_FILE")
+          echo "Generated ${DOMAIN_COUNT} unique domains."
+
+          cp "$TMP_FILE" "$OUT_FILE"
+
+          {
+            echo "# LOLRMM RMM Domain EDL"
+            echo
+            echo "Auto-generated from [LOLRMM](https://lolrmm.io) — Living Off the Land RMM tool network indicators."
+            echo
+            echo "Use as a Palo Alto Domain-type External Dynamic List to block or alert on RMM tool C2 domains."
+            echo
+            echo "## Stats"
+            echo
+            echo "- **Last updated UTC:** $(date -u '+%Y-%m-%d %H:%M:%S')"
+            echo "- **Domain count:** ${DOMAIN_COUNT}"
+            echo
+            echo "## EDL URL"
+            echo
+            echo '```'
+            echo "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/lolrmm/lolrmm-domains-edl.txt"
+            echo '```'
+          } > lolrmm/README.md
+
+      - name: Commit updated EDL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add lolrmm/lolrmm-domains-edl.txt lolrmm/README.md
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update LOLRMM RMM Domain EDL"
+            git push
+          fi
