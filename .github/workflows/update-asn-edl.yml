@@ -17,7 +17,7 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Build ASN EDL from RIPEstat
+      - name: Build per-ASN EDLs from RIPEstat
         shell: bash
         run: |
           set -euo pipefail
@@ -26,56 +26,58 @@ jobs:
 
           mkdir -p asn
 
-          TMP_FILE="$(mktemp)"
-          OUT_FILE="asn/palo-asn-edl.txt"
-
-          : > "$TMP_FILE"
-
           declare -A ASN_ORGS
+          declare -A ASN_COUNTS
+
+          # Remove old combined file if it exists
+          rm -f asn/palo-asn-edl.txt
 
           for asn in $ASNS; do
             echo "Fetching AS${asn}..."
-            curl -fsS "https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS${asn}" \
-              | jq -r '.data.prefixes[].prefix' >> "$TMP_FILE"
+            OUT_FILE="asn/AS${asn}.txt"
+            TMP_FILE="$(mktemp)"
 
-            # Fetch org name from RIPEstat overview
+            curl -fsS "https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS${asn}" \
+              | jq -r '.data.prefixes[].prefix' > "$TMP_FILE"
+
+            grep -E '^[0-9a-fA-F:.]+/[0-9]+$' "$TMP_FILE" \
+              | sort -u > "$OUT_FILE"
+
+            ASN_COUNTS[$asn]=$(wc -l < "$OUT_FILE")
+            echo "  -> AS${asn}: ${ASN_COUNTS[$asn]} prefixes"
+
+            # Fetch org name
             ORG=$(curl -fsS "https://stat.ripe.net/data/as-overview/data.json?resource=AS${asn}" \
               | jq -r '.data.holder // "Unknown"')
             ASN_ORGS[$asn]="$ORG"
           done
 
-          grep -E '^[0-9a-fA-F:.]+/[0-9]+$' "$TMP_FILE" \
-            | sort -u > "$OUT_FILE"
-
-          PREFIX_COUNT=$(wc -l < "$OUT_FILE")
-          echo "Generated ${PREFIX_COUNT} prefixes."
+          REPO_RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/asn"
 
           {
-            echo "# Palo Alto ASN EDL"
+            echo "# Palo Alto ASN EDLs"
             echo
-            echo "Auto-generated from RIPEstat announced prefixes."
+            echo "Auto-generated from RIPEstat announced prefixes. One EDL file per ASN — add each as a separate IP List EDL in Palo to stay under per-list capacity limits."
             echo
-            echo "## ASNs"
+            echo "## Feeds"
             echo
-            echo "| ASN | Organization |"
-            echo "| --- | ------------ |"
+            echo "| ASN | Organization | Prefix Count | EDL URL |"
+            echo "| --- | ------------ | ------------ | ------- |"
             for asn in $ASNS; do
-              echo "| AS${asn} | ${ASN_ORGS[$asn]} |"
+              echo "| AS${asn} | ${ASN_ORGS[$asn]} | ${ASN_COUNTS[$asn]} | \`${REPO_RAW}/AS${asn}.txt\` |"
             done
             echo
             echo "## Stats"
             echo
             echo "- **Last updated UTC:** $(date -u '+%Y-%m-%d %H:%M:%S')"
-            echo "- **Prefix count:** ${PREFIX_COUNT}"
-            echo
-            echo "## EDL URL"
-            echo
-            echo '```'
-            echo "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/asn/palo-asn-edl.txt"
-            echo '```'
+            TOTAL=0
+            for asn in $ASNS; do
+              TOTAL=$((TOTAL + ASN_COUNTS[$asn]))
+            done
+            echo "- **Total prefixes (all ASNs):** ${TOTAL}"
           } > asn/README.md
 
-      - name: Commit updated EDL
+      - name: Commit updated EDLs
         shell: bash
         run: |
           set -euo pipefail
@@ -83,11 +85,11 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          git add asn/palo-asn-edl.txt asn/README.md
+          git add asn/
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Update Palo ASN EDL"
+            git commit -m "Update Palo ASN EDLs"
             git push
           fi
