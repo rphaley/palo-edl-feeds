@@ -1,0 +1,136 @@
+name: Update Palo Threat EDL
+
+on:
+  schedule:
+    - cron: "30 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-threat-edl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Build deduped threat feed EDL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p threat
+
+          # Source feeds - name|url pairs (order is preserved in the README)
+          SOURCES=(
+            "emerging_threats|https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt"
+            "emerging_threats_compromised|https://rules.emergingthreats.net/blockrules/compromised-ips.txt"
+            "cins_score|https://cinsscore.com/list/ci-badguys.txt"
+            "blocklist_de|https://opendbl.net/lists/blocklistde-all.list"
+          )
+
+          declare -A SOURCE_COUNTS
+          COMBINED="$(mktemp)"
+          : > "$COMBINED"
+
+          for entry in "${SOURCES[@]}"; do
+            name="${entry%%|*}"
+            url="${entry#*|}"
+            tmp="$(mktemp)"
+
+            echo "Fetching $name from $url..."
+            if ! curl -fsSL --max-time 60 "$url" > "$tmp"; then
+              echo "  WARN: failed to fetch $name, skipping"
+              SOURCE_COUNTS[$name]=0
+              continue
+            fi
+
+            # Keep only valid IPv4 (with optional CIDR), ignore comments / junk
+            grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9]+)?$' "$tmp" \
+              | sort -u > "${tmp}.clean"
+
+            count=$(wc -l < "${tmp}.clean")
+            SOURCE_COUNTS[$name]=$count
+            cat "${tmp}.clean" >> "$COMBINED"
+            echo "  -> $name: $count entries"
+          done
+
+          OUT_FILE="threat/combined-threat-ips.txt"
+
+          python3 - "$COMBINED" > "$OUT_FILE" <<'PY'
+          import sys, ipaddress
+          nets = set()
+          with open(sys.argv[1]) as f:
+              for line in f:
+                  line = line.strip()
+                  if not line:
+                      continue
+                  try:
+                      nets.add(ipaddress.ip_network(line, strict=False))
+                  except ValueError:
+                      pass
+          v4 = sorted(ipaddress.collapse_addresses([n for n in nets if n.version == 4]))
+          v6 = sorted(ipaddress.collapse_addresses([n for n in nets if n.version == 6]))
+          for n in v4 + v6:
+              print(n)
+          PY
+
+          FINAL_COUNT=$(wc -l < "$OUT_FILE")
+
+          RAW_TOTAL=0
+          for entry in "${SOURCES[@]}"; do
+            name="${entry%%|*}"
+            RAW_TOTAL=$((RAW_TOTAL + ${SOURCE_COUNTS[$name]:-0}))
+          done
+          SAVED=$((RAW_TOTAL - FINAL_COUNT))
+
+          REPO_RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/threat"
+
+          {
+            echo "# Palo Alto Threat Feed EDL"
+            echo
+            echo "Combined and deduplicated threat IP feeds from multiple sources. Adjacent CIDRs are aggregated. Use this as a single IP List EDL in Palo in place of the per-source EDLs to save capacity."
+            echo
+            echo "## Sources"
+            echo
+            echo "| Source | Raw Count | URL |"
+            echo "| ------ | --------- | --- |"
+            for entry in "${SOURCES[@]}"; do
+              name="${entry%%|*}"
+              url="${entry#*|}"
+              count="${SOURCE_COUNTS[$name]:-FAIL}"
+              echo "| ${name} | ${count} | \`${url}\` |"
+            done
+            echo
+            echo "## Output"
+            echo
+            echo "- **Combined EDL URL:** \`${REPO_RAW}/combined-threat-ips.txt\`"
+            echo "- **Final entry count:** ${FINAL_COUNT}"
+            echo "- **Raw total (sum of all sources):** ${RAW_TOTAL}"
+            echo "- **Slots saved vs. running them separately:** ${SAVED}"
+            echo "- **Last updated UTC:** $(date -u '+%Y-%m-%d %H:%M:%S')"
+          } > threat/README.md
+
+          # Warn if we're still close to the PA-440 IP EDL cap
+          if [ "$FINAL_COUNT" -gt 45000 ]; then
+            echo "::warning::Combined EDL has ${FINAL_COUNT} entries — approaching the 50k PA-440 cap"
+          fi
+
+      - name: Commit updated threat EDL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add threat/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update threat feed EDL"
+            git push
+          fi
