@@ -2,7 +2,6 @@ name: Update Palo ASN EDL
 
 on:
   schedule:
-    # Every 24 hours, offset from the top of the hour
     - cron: "0 8 * * *"
   workflow_dispatch:
 
@@ -28,25 +27,44 @@ jobs:
 
           declare -A ASN_ORGS
           declare -A ASN_COUNTS
+          declare -A ASN_RAW_COUNTS
 
-          # Remove old combined file if it exists
           rm -f asn/palo-asn-edl.txt
 
           for asn in $ASNS; do
             echo "Fetching AS${asn}..."
             OUT_FILE="asn/AS${asn}.txt"
-            TMP_FILE="$(mktemp)"
+            RAW_FILE="$(mktemp)"
 
             curl -fsS "https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS${asn}" \
-              | jq -r '.data.prefixes[].prefix' > "$TMP_FILE"
+              | jq -r '.data.prefixes[].prefix' \
+              | grep -E '^[0-9a-fA-F:.]+/[0-9]+$' \
+              | sort -u > "$RAW_FILE"
 
-            grep -E '^[0-9a-fA-F:.]+/[0-9]+$' "$TMP_FILE" \
-              | sort -u > "$OUT_FILE"
+            ASN_RAW_COUNTS[$asn]=$(wc -l < "$RAW_FILE")
+
+            # Aggregate adjacent CIDRs to minimize EDL entry count
+            python3 - "$RAW_FILE" > "$OUT_FILE" <<'PY'
+          import sys, ipaddress
+          with open(sys.argv[1]) as f:
+              nets = set()
+              for line in f:
+                  line = line.strip()
+                  if not line:
+                      continue
+                  try:
+                      nets.add(ipaddress.ip_network(line, strict=False))
+                  except ValueError:
+                      pass
+          v4 = sorted(ipaddress.collapse_addresses([n for n in nets if n.version == 4]))
+          v6 = sorted(ipaddress.collapse_addresses([n for n in nets if n.version == 6]))
+          for n in v4 + v6:
+              print(n)
+          PY
 
             ASN_COUNTS[$asn]=$(wc -l < "$OUT_FILE")
-            echo "  -> AS${asn}: ${ASN_COUNTS[$asn]} prefixes"
+            echo "  -> AS${asn}: ${ASN_RAW_COUNTS[$asn]} raw -> ${ASN_COUNTS[$asn]} aggregated"
 
-            # Fetch org name
             ORG=$(curl -fsS "https://stat.ripe.net/data/as-overview/data.json?resource=AS${asn}" \
               | jq -r '.data.holder // "Unknown"')
             ASN_ORGS[$asn]="$ORG"
@@ -57,24 +75,27 @@ jobs:
           {
             echo "# Palo Alto ASN EDLs"
             echo
-            echo "Auto-generated from RIPEstat announced prefixes. One EDL file per ASN — add each as a separate IP List EDL in Palo to stay under per-list capacity limits."
+            echo "Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated to minimize EDL entry count. One EDL file per ASN — add each as a separate IP List EDL in Palo to stay under per-list capacity limits."
             echo
             echo "## Feeds"
             echo
-            echo "| ASN | Organization | Prefix Count | EDL URL |"
-            echo "| --- | ------------ | ------------ | ------- |"
+            echo "| ASN | Organization | Raw | Aggregated | EDL URL |"
+            echo "| --- | ------------ | --- | ---------- | ------- |"
             for asn in $ASNS; do
-              echo "| AS${asn} | ${ASN_ORGS[$asn]} | ${ASN_COUNTS[$asn]} | \`${REPO_RAW}/AS${asn}.txt\` |"
+              echo "| AS${asn} | ${ASN_ORGS[$asn]} | ${ASN_RAW_COUNTS[$asn]} | ${ASN_COUNTS[$asn]} | \`${REPO_RAW}/AS${asn}.txt\` |"
             done
             echo
             echo "## Stats"
             echo
             echo "- **Last updated UTC:** $(date -u '+%Y-%m-%d %H:%M:%S')"
-            TOTAL=0
+            TOTAL_RAW=0
+            TOTAL_AGG=0
             for asn in $ASNS; do
-              TOTAL=$((TOTAL + ASN_COUNTS[$asn]))
+              TOTAL_RAW=$((TOTAL_RAW + ASN_RAW_COUNTS[$asn]))
+              TOTAL_AGG=$((TOTAL_AGG + ASN_COUNTS[$asn]))
             done
-            echo "- **Total prefixes (all ASNs):** ${TOTAL}"
+            echo "- **Total prefixes (raw):** ${TOTAL_RAW}"
+            echo "- **Total prefixes (aggregated):** ${TOTAL_AGG}"
           } > asn/README.md
 
       - name: Commit updated EDLs
