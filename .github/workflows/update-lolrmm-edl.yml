@@ -35,6 +35,7 @@ jobs:
               ' \
             | tr '[:upper:]' '[:lower:]' \
             | grep -E '^([a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$' \
+            | grep -Ev '(^|\.)(github\.com|githubusercontent\.com)$' \
             | sort -u > "$TMP_FILE"
 
           DOMAIN_COUNT=$(wc -l < "$TMP_FILE")
