@@ -137,7 +137,6 @@ gerwconline.blob.core.windows.net
 getalphacontrol.com
 getscreen.me
 ghcr.io
-github.com
 global.rel.tunnels.api.visualstudio.com
 glpi-network.com
 glpi-project.org
@@ -231,7 +230,6 @@ ninjarmm.net
 nomachine.com
 nv0mddxkh7.execute-api.us-west-2.amazonaws.com
 nvaccess.org
-objects.githubusercontent.com
 ocsinventory-ng.org
 one.comodo.com
 online.level.io
@@ -252,7 +250,6 @@ pulseway.com
 qq-messenger.en.softonic.com
 r1.rmm.uw.gorelo.tech
 radmin.com
-raw.githubusercontent.com
 rdp.duetdisplay.com
 relay.netbird.io
 releases.invgate.com
