@@ -23,21 +23,63 @@ jobs:
 
           mkdir -p threat
 
-          # Source feeds - name|url pairs (order is preserved in the README)
+          # Source feeds - name|url|parser triples (order is preserved in the README)
+          # Parsers:
+          #   bare      - lines matching ^IPv4(/CIDR)?$ (ET, CINS, blocklist.de, BinaryDefense)
+          #   spamhaus  - "1.2.3.0/24 ; SBL12345" style; strip trailing comment
+          #   dshield   - tab-delimited, take col3 and append /24 (DShield Top-20)
           SOURCES=(
-            "emerging_threats|https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt"
-            "emerging_threats_compromised|https://rules.emergingthreats.net/blockrules/compromised-ips.txt"
-            "cins_score|https://cinsscore.com/list/ci-badguys.txt"
-            "blocklist_de|https://opendbl.net/lists/blocklistde-all.list"
+            "emerging_threats|https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt|bare"
+            "emerging_threats_compromised|https://rules.emergingthreats.net/blockrules/compromised-ips.txt|bare"
+            "cins_score|https://cinsscore.com/list/ci-badguys.txt|bare"
+            "blocklist_de|https://opendbl.net/lists/blocklistde-all.list|bare"
+            "spamhaus_drop|https://www.spamhaus.org/drop/drop.txt|spamhaus"
+            "dshield_block|https://feeds.dshield.org/block.txt|dshield"
+            "binary_defense|https://www.binarydefense.com/banlist.txt|bare"
           )
 
           declare -A SOURCE_COUNTS
           COMBINED="$(mktemp)"
           : > "$COMBINED"
 
+          parse_bare() {
+            grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9]+)?$' "$1" | sort -u
+          }
+
+          parse_spamhaus() {
+            # Lines look like: "1.10.16.0/20 ; SBL256894"
+            # Skip header/comment lines starting with ';'
+            awk '
+              /^[[:space:]]*;/ { next }
+              /^[[:space:]]*$/ { next }
+              {
+                # First whitespace-separated field is the CIDR
+                print $1
+              }
+            ' "$1" \
+              | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9]+)?$' \
+              | sort -u
+          }
+
+          parse_dshield() {
+            # Tab-delimited columns:
+            #   1: start of netblock
+            #   2: end of netblock
+            #   3: subnet (already a dotted /24 base, e.g. "5.188.86.0")
+            #   4: number of targets
+            #   5+: name, country, contact
+            # Header/comment lines start with '#'. We emit col3/24.
+            awk -F'\t' '
+              /^#/ { next }
+              /^[[:space:]]*$/ { next }
+              $3 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ {
+                print $3 "/24"
+              }
+            ' "$1" | sort -u
+          }
+
           for entry in "${SOURCES[@]}"; do
-            name="${entry%%|*}"
-            url="${entry#*|}"
+            IFS='|' read -r name url parser <<<"$entry"
             tmp="$(mktemp)"
 
             echo "Fetching $name from $url..."
@@ -47,9 +89,16 @@ jobs:
               continue
             fi
 
-            # Keep only valid IPv4 (with optional CIDR), ignore comments / junk
-            grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9]+)?$' "$tmp" \
-              | sort -u > "${tmp}.clean"
+            case "$parser" in
+              bare)      parse_bare     "$tmp" > "${tmp}.clean" ;;
+              spamhaus)  parse_spamhaus "$tmp" > "${tmp}.clean" ;;
+              dshield)   parse_dshield  "$tmp" > "${tmp}.clean" ;;
+              *)
+                echo "  WARN: unknown parser '$parser' for $name, skipping"
+                SOURCE_COUNTS[$name]=0
+                continue
+                ;;
+            esac
 
             count=$(wc -l < "${tmp}.clean")
             SOURCE_COUNTS[$name]=$count
@@ -98,8 +147,7 @@ jobs:
             echo "| Source | Raw Count | URL |"
             echo "| ------ | --------- | --- |"
             for entry in "${SOURCES[@]}"; do
-              name="${entry%%|*}"
-              url="${entry#*|}"
+              IFS='|' read -r name url parser <<<"$entry"
               count="${SOURCE_COUNTS[$name]:-FAIL}"
               echo "| ${name} | ${count} | \`${url}\` |"
             done
