@@ -6,18 +6,18 @@ Combined and deduplicated threat IP feeds from multiple sources. Adjacent CIDRs 
 
 | Source | Raw Count | URL |
 | ------ | --------- | --- |
-| emerging_threats | 1701 | `https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt` |
-| emerging_threats_compromised | 584 | `https://rules.emergingthreats.net/blockrules/compromised-ips.txt` |
+| emerging_threats | 1700 | `https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt` |
+| emerging_threats_compromised | 578 | `https://rules.emergingthreats.net/blockrules/compromised-ips.txt` |
 | cins_score | 15000 | `https://cinsscore.com/list/ci-badguys.txt` |
-| blocklist_de | 26809 | `https://opendbl.net/lists/blocklistde-all.list` |
+| blocklist_de | 29149 | `https://opendbl.net/lists/blocklistde-all.list` |
 | spamhaus_drop | 1677 | `https://www.spamhaus.org/drop/drop.txt` |
 | dshield_block | 20 | `https://isc.sans.edu/block.txt` |
-| binary_defense | 2373 | `https://www.binarydefense.com/banlist.txt` |
+| binary_defense | 2601 | `https://www.binarydefense.com/banlist.txt` |
 
 ## Output
 
 - **Combined EDL URL:** `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/threat/combined-threat-ips.txt`
-- **Final entry count:** 32526
-- **Raw total (sum of all sources):** 48164
-- **Slots saved vs. running them separately:** 15638
-- **Last updated UTC:** 2026-07-17 06:34:38
+- **Final entry count:** 34232
+- **Raw total (sum of all sources):** 50725
+- **Slots saved vs. running them separately:** 16493
+- **Last updated UTC:** 2026-07-18 06:25:47
