@@ -8,9 +8,9 @@ Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated t
 | --- | ------------ | --- | ---------- | ------- |
 | AS63949 | AKAMAI-LINODE-AP - Akamai Connected Cloud | 443 | 169 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS63949.txt` |
 | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC | 888 | 182 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS14061.txt` |
-| AS20473 | AS-VULTR - The Constant Company, LLC | 2155 | 1022 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
+| AS20473 | AS-VULTR - The Constant Company, LLC | 2498 | 1338 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
 | AS24940 | HETZNER-AS Hetzner Online GmbH | 94 | 83 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS24940.txt` |
-| AS16276 | OVH OVH SAS | 750 | 612 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS16276.txt` |
+| AS16276 | OVH OVH SAS | 749 | 611 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS16276.txt` |
 | AS51167 | CONTABO Contabo GmbH | 573 | 252 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS51167.txt` |
 | AS9009 | M247 M247 Europe SRL | 5048 | 2890 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS9009.txt` |
 | AS53667 | PONYNET - FranTech Solutions | 77 | 51 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS53667.txt` |
@@ -19,6 +19,6 @@ Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated t
 
 ## Stats
 
-- **Last updated UTC:** 2026-08-01 09:54:37
-- **Total prefixes (raw):** 14721
-- **Total prefixes (aggregated):** 8276
+- **Last updated UTC:** 2026-08-02 09:52:37
+- **Total prefixes (raw):** 15063
+- **Total prefixes (aggregated):** 8591
