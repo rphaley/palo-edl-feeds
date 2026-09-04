@@ -13,11 +13,12 @@ Combined and deduplicated threat IP feeds from multiple sources. Adjacent CIDRs 
 | spamhaus_drop | 1708 | `https://www.spamhaus.org/drop/drop.txt` |
 | dshield_block | 20 | `https://isc.sans.edu/block.txt` |
 | binary_defense | 1038 | `https://www.binarydefense.com/banlist.txt` |
+| waf_offenders (local) | 218 | `waf/waf-offenders.txt` |
 
 ## Output
 
 - **Combined EDL URL:** `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/threat/combined-threat-ips.txt`
-- **Final entry count:** 35392
-- **Raw total (sum of all sources):** 49160
-- **Slots saved vs. running them separately:** 13768
-- **Last updated UTC:** 2026-09-04 16:23:50
+- **Final entry count:** 35581
+- **Raw total (sum of all sources):** 49378
+- **Slots saved vs. running them separately:** 13797
+- **Last updated UTC:** 2026-09-04 16:33:36
