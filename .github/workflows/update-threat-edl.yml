@@ -111,6 +111,20 @@ jobs:
             echo "  -> $name: $count entries"
           done
 
+          # Local source: WAF offenders committed by the edge proxy.
+          # Read from the working tree, not over HTTP, so it cannot fail on a
+          # network blip and is not subject to raw.githubusercontent caching.
+          WAF_COUNT=0
+          if [ -f waf/waf-offenders.txt ]; then
+            waf_tmp="$(mktemp)"
+            parse_bare waf/waf-offenders.txt > "$waf_tmp"
+            WAF_COUNT=$(wc -l < "$waf_tmp")
+            cat "$waf_tmp" >> "$COMBINED"
+            echo "  -> waf_offenders: $WAF_COUNT entries"
+          else
+            echo "  waf/waf-offenders.txt not present, skipping"
+          fi
+
           OUT_FILE="threat/combined-threat-ips.txt"
 
           python3 - "$COMBINED" > "$OUT_FILE" <<'PY'
@@ -138,6 +152,7 @@ jobs:
             name="${entry%%|*}"
             RAW_TOTAL=$((RAW_TOTAL + ${SOURCE_COUNTS[$name]:-0}))
           done
+          RAW_TOTAL=$((RAW_TOTAL + WAF_COUNT))
           SAVED=$((RAW_TOTAL - FINAL_COUNT))
 
           REPO_RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/threat"
@@ -156,6 +171,7 @@ jobs:
               count="${SOURCE_COUNTS[$name]:-FAIL}"
               echo "| ${name} | ${count} | \`${url}\` |"
             done
+            echo "| waf_offenders (local) | ${WAF_COUNT} | \`waf/waf-offenders.txt\` |"
             echo
             echo "## Output"
             echo
@@ -179,7 +195,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          git add threat/
+          git add threat/ waf/
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
