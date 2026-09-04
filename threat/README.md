@@ -20,4 +20,4 @@ Combined and deduplicated threat IP feeds from multiple sources. Adjacent CIDRs 
 - **Final entry count:** 35392
 - **Raw total (sum of all sources):** 49160
 - **Slots saved vs. running them separately:** 13768
-- **Last updated UTC:** 2026-09-04 16:18:21
+- **Last updated UTC:** 2026-09-04 16:23:50
