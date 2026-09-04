@@ -1,7 +1,7 @@
 # Coraza WAF offenders from the DePaul cyber range edge proxy
 # Source: requests blocked by OWASP CRS at the reverse proxy
 # Window: 14 days rolling, best effort (bounded by log retention)
-# Updated: 2026-09-04 16:04:33 UTC
+# Updated: 2026-09-04 16:23:04 UTC
 100.52.180.20
 100.62.21.210
 103.168.147.235
@@ -118,6 +118,7 @@
 34.180.91.48
 34.181.134.186
 34.187.81.14
+34.227.80.105
 34.23.176.19
 34.24.121.141
 34.24.130.15
@@ -127,6 +128,7 @@
 34.41.239.71
 34.41.61.59
 34.47.116.99
+34.47.120.72
 34.50.113.115
 34.53.107.173
 34.53.187.53
