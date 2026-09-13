@@ -7,10 +7,10 @@ Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated t
 | ASN | Organization | Raw | Aggregated | EDL URL |
 | --- | ------------ | --- | ---------- | ------- |
 | AS63949 | AKAMAI-LINODE-AP - Akamai Connected Cloud | 445 | 174 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS63949.txt` |
-| AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC | 888 | 181 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS14061.txt` |
-| AS20473 | AS-VULTR - The Constant Company, LLC | 2982 | 1689 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
+| AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC | 889 | 180 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS14061.txt` |
+| AS20473 | AS-VULTR - The Constant Company, LLC | 2993 | 1696 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
 | AS24940 | HETZNER-AS Hetzner Online GmbH | 96 | 84 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS24940.txt` |
-| AS16276 | OVH OVH SAS | 762 | 622 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS16276.txt` |
+| AS16276 | OVH OVH SAS | 764 | 624 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS16276.txt` |
 | AS51167 | CONTABO Contabo GmbH | 573 | 252 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS51167.txt` |
 | AS9009 | M247 M247 Europe SRL | 5079 | 2891 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS9009.txt` |
 | AS53667 | PONYNET - FranTech Solutions | 76 | 50 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS53667.txt` |
@@ -19,6 +19,6 @@ Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated t
 
 ## Stats
 
-- **Last updated UTC:** 2026-09-12 11:56:34
-- **Total prefixes (raw):** 15746
-- **Total prefixes (aggregated):** 9071
+- **Last updated UTC:** 2026-09-13 13:04:27
+- **Total prefixes (raw):** 15760
+- **Total prefixes (aggregated):** 9079
