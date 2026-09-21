@@ -8,7 +8,7 @@ Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated t
 | --- | ------------ | --- | ---------- | ------- |
 | AS63949 | AKAMAI-LINODE-AP - Akamai Connected Cloud | 445 | 174 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS63949.txt` |
 | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC | 889 | 180 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS14061.txt` |
-| AS20473 | AS-VULTR - The Constant Company, LLC | 2982 | 1719 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
+| AS20473 | AS-VULTR - The Constant Company, LLC | 2976 | 1707 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
 | AS24940 | HETZNER-AS Hetzner Online GmbH | 95 | 84 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS24940.txt` |
 | AS16276 | OVH OVH SAS | 762 | 622 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS16276.txt` |
 | AS51167 | CONTABO Contabo GmbH | 573 | 252 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS51167.txt` |
@@ -19,6 +19,6 @@ Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated t
 
 ## Stats
 
-- **Last updated UTC:** 2026-09-20 12:49:46
-- **Total prefixes (raw):** 15863
-- **Total prefixes (aggregated):** 9169
+- **Last updated UTC:** 2026-09-21 14:48:46
+- **Total prefixes (raw):** 15857
+- **Total prefixes (aggregated):** 9157
