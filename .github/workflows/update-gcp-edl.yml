@@ -1,0 +1,93 @@
+name: Update Palo GCP EDL
+
+on:
+  schedule:
+    - cron: "30 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-edl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Build GCP EDL from gstatic cloud.json
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p gcp
+          OUT_FILE="gcp/gcp-ranges.txt"
+          RAW_FILE="$(mktemp)"
+
+          curl -fsS "https://www.gstatic.com/ipranges/cloud.json" \
+            | jq -r '.prefixes[] | (.ipv4Prefix // .ipv6Prefix)' \
+            | grep -E '^[0-9a-fA-F:.]+/[0-9]+$' \
+            | sort -u > "$RAW_FILE"
+
+          RAW_COUNT=$(wc -l < "$RAW_FILE")
+
+          # Collapse adjacent CIDRs to minimize EDL entry count
+          python3 - "$RAW_FILE" > "$OUT_FILE" <<'PY'
+          import sys, ipaddress
+          with open(sys.argv[1]) as f:
+              nets = set()
+              for line in f:
+                  line = line.strip()
+                  if not line:
+                      continue
+                  try:
+                      nets.add(ipaddress.ip_network(line, strict=False))
+                  except ValueError:
+                      pass
+          v4 = sorted(ipaddress.collapse_addresses([n for n in nets if n.version == 4]))
+          v6 = sorted(ipaddress.collapse_addresses([n for n in nets if n.version == 6]))
+          for n in v4 + v6:
+              print(n)
+          PY
+
+          AGG_COUNT=$(wc -l < "$OUT_FILE")
+
+          SYNC_TOKEN=$(curl -fsS "https://www.gstatic.com/ipranges/cloud.json" | jq -r '.syncToken')
+          REPO_RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/gcp"
+
+          {
+            echo "# Palo Alto GCP EDL"
+            echo
+            echo "Auto-generated from Google's published [Google Cloud IP ranges](https://www.gstatic.com/ipranges/cloud.json) (\`cloud.json\`). Adjacent CIDRs are collapsed to minimize EDL entry count. Add as a single IP List EDL in Palo."
+            echo
+            echo "## Feed"
+            echo
+            echo "| Source | Raw | Aggregated | EDL URL |"
+            echo "| ------ | --- | ---------- | ------- |"
+            echo "| gstatic cloud.json | ${RAW_COUNT} | ${AGG_COUNT} | \`${REPO_RAW}/gcp-ranges.txt\` |"
+            echo
+            echo "## Stats"
+            echo
+            echo "- **Last updated UTC:** $(date -u '+%Y-%m-%d %H:%M:%S')"
+            echo "- **Google syncToken:** ${SYNC_TOKEN}"
+            echo "- **Total prefixes (raw):** ${RAW_COUNT}"
+            echo "- **Total prefixes (aggregated):** ${AGG_COUNT}"
+          } > gcp/README.md
+
+      - name: Commit updated EDL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add gcp/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update Palo GCP EDL"
+            git push
+          fi
