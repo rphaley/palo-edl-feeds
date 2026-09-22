@@ -2,4 +2,15 @@
 
 Auto-generated from Google's published [Google Cloud IP ranges](https://www.gstatic.com/ipranges/cloud.json) (`cloud.json`). Adjacent CIDRs are collapsed to minimize EDL entry count. Add as a single IP List EDL in Palo.
 
-Not yet built. Trigger the `Update Palo GCP EDL` workflow (manually via `workflow_dispatch`, or wait for the daily 08:30 UTC run) to populate `gcp-ranges.txt` and these stats.
+## Feed
+
+| Source | Raw | Aggregated | EDL URL |
+| ------ | --- | ---------- | ------- |
+| gstatic cloud.json | 1103 | 476 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/gcp/gcp-ranges.txt` |
+
+## Stats
+
+- **Last updated UTC:** 2026-09-22 14:20:59
+- **Google syncToken:** 1790064350042
+- **Total prefixes (raw):** 1103
+- **Total prefixes (aggregated):** 476
