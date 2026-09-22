@@ -31,26 +31,28 @@ jobs:
 
           ENTRY_COUNT=$(grep -vc '^#' "$FILE" || true)
 
-          # Pull the metadata the proxy already writes into its own header
-          # comments, rather than re-stating it by hand in the README.
-          SOURCE_LINE=$(grep -m1 '^# Source:' "$FILE" | sed 's/^# Source: //')
+          # Only pull the window/updated timestamp out of the proxy's own
+          # header comments. Never echo a free-text "Source:" line from that
+          # file into the public README — it can (and has) named the specific
+          # WAF product/ruleset in use, which is recon value we don't want to
+          # publish. The description below is hardcoded and generic on purpose.
           WINDOW_LINE=$(grep -m1 '^# Window:' "$FILE" | sed 's/^# Window: //')
           PROXY_UPDATED=$(grep -m1 '^# Updated:' "$FILE" | sed 's/^# Updated: //')
 
           {
             echo "# WAF Offenders"
             echo
-            echo "Source IPs blocked by [Coraza](https://coraza.io) / OWASP CRS at the DePaul cyber range edge reverse proxy. This is a **source**, not a consumable EDL — it has no fetch-and-build workflow of its own. The edge proxy commits directly to \`waf-offenders.txt\`, and this README is regenerated automatically whenever that file changes. The [threat feed workflow](../.github/workflows/update-threat-edl.yml) merges it into [\`combined-threat-ips.txt\`](../threat/) on its next run."
+            echo "Source IPs blocked at the DePaul cyber range edge reverse proxy. This is a **source**, not a consumable EDL — it has no fetch-and-build workflow of its own. The edge proxy commits directly to \`waf-offenders.txt\`, and this README is regenerated automatically whenever that file changes. The [threat feed workflow](../.github/workflows/update-threat-edl.yml) merges it into [\`combined-threat-ips.txt\`](../threat/) on its next run."
             echo
             echo "## Format"
             echo
-            echo "Plain text, one IPv4 address per line, preceded by a \`#\`-prefixed header block giving source, window, and last-updated time. No CIDR aggregation — this is raw log output, not built for direct EDL use."
+            echo "Plain text, one IPv4 address per line, preceded by a \`#\`-prefixed header block giving window and last-updated time. No CIDR aggregation — this is raw log output, not built for direct EDL use."
             echo
             echo "## Details"
             echo
             echo "| | |"
             echo "| --- | --- |"
-            echo "| Source | ${SOURCE_LINE:-unknown} |"
+            echo "| Source | Requests blocked at the edge reverse proxy |"
             echo "| Window | ${WINDOW_LINE:-unknown} |"
             echo "| Push cadence | Hourly, by the edge proxy directly |"
             echo "| Consumed by | [Combined Threat IPs](../threat/) feed, daily at 04:30 UTC |"
