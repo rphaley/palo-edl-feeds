@@ -16,7 +16,7 @@ Plain text, one IPv4 address per line, preceded by a `#`-prefixed header block g
 | Consumed by | [Combined Threat IPs](../threat/) feed, daily at 04:30 UTC |
 | Current entries | 169 |
 | Proxy last updated | 2026-09-22 09:00:09 UTC |
-| README last computed | 2026-09-22 14:26:23 UTC |
+| README last computed | 2026-09-22 14:28:00 UTC |
 
 ## Notes
 
