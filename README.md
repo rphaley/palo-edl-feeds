@@ -8,7 +8,7 @@ Point your Palo EDL objects directly at the raw GitHub URLs — no hosting requi
 
 | Feed | Type | Description | Files |
 | ---- | ---- | ----------- | ----- |
-| [Combined Threat IPs](./threat/) | IP List | Deduplicated and CIDR-aggregated union of seven public threat IP feeds, plus locally observed WAF offenders. Use this in place of the individual source EDLs to save firewall capacity. | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/threat/combined-threat-ips.txt` |
+| [Combined Threat IPs](./threat/) | IP List | Deduplicated and CIDR-aggregated union of seven public threat IP feeds, the AbuseIPDB blacklist (when an API key is configured), and locally observed WAF offenders. Use this in place of the individual source EDLs to save firewall capacity. | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/threat/combined-threat-ips.txt` |
 | [ASN Prefixes](./asn/) | IP List | IP prefixes announced by curated VPS/hosting ASNs commonly abused by threat actors. **One EDL file per ASN** to stay under firewall per-list capacity limits. | See [asn/README.md](./asn/README.md) for per-ASN URLs |
 | [GCP Ranges](./gcp/) | IP List | All published Google Cloud IP prefixes (IPv4 + IPv6), sourced from Google's `cloud.json` and collapsed to minimize entry count. | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/gcp/gcp-ranges.txt` |
 | [LOLRMM Domains](./lolrmm/) | Domain List | Domains associated with RMM tools tracked by [LOLRMM](https://lolrmm.io). Used in Anti-Spyware profile for DNS sinkholing. | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/lolrmm/lolrmm-domains-edl.txt` |
@@ -32,6 +32,10 @@ Domain List EDLs cannot be referenced directly in a Security Policy rule. They m
 2. **Objects → Security Profiles → Anti-Spyware → [profile] → DNS Policies tab**
 3. Under External Dynamic Lists, add the Domain EDL with Policy Action `sinkhole` or `block`
 4. Attach the Anti-Spyware profile to a Security Policy rule covering outbound DNS traffic
+
+## Setup
+
+The threat feed pulls the AbuseIPDB blacklist, which needs an API key. Add it as a repository secret named `ABUSEIPDB_API_KEY` (**Settings > Secrets and variables > Actions > New repository secret**). If the secret is unset, the AbuseIPDB source is skipped and the rest of the feed builds normally. A free key is enough (1 call per day, up to 10,000 IPs).
 
 ## Schedule
 
