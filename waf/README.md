@@ -15,8 +15,8 @@ Plain text, one IPv4 address per line, preceded by a `#`-prefixed header block g
 | Push cadence | Hourly, by the edge proxy directly |
 | Consumed by | [Combined Threat IPs](../threat/) feed, daily at 04:30 UTC |
 | Current entries | 100 |
-| Proxy last updated | 2026-10-04 09:00:15 UTC |
-| README last computed | 2026-10-04 09:00:25 UTC |
+| Proxy last updated | 2026-10-05 09:00:15 UTC |
+| README last computed | 2026-10-05 09:00:24 UTC |
 
 ## Notes
 
