@@ -137,7 +137,7 @@ jobs:
             abuse_tmp="$(mktemp)"
             abuse_code=$(curl -sSL --max-time 120 \
               -G "https://api.abuseipdb.com/api/v2/blacklist" \
-              -d confidenceMinimum=90 -d limit=10000 -d plaintext \
+              -d confidenceMinimum=90 -d limit=10000 -d ipVersion=4 -d plaintext \
               -H "Key: ${ABUSEIPDB_API_KEY}" \
               -H "Accept: text/plain" \
               -w '%{http_code}' -o "$abuse_tmp" 2>/dev/null) || abuse_code="curl_fail"
