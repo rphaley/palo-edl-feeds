@@ -18,6 +18,8 @@ jobs:
 
       - name: Build deduped threat feed EDL
         shell: bash
+        env:
+          ABUSEIPDB_API_KEY: ${{ secrets.ABUSEIPDB_API_KEY }}
         run: |
           set -euo pipefail
 
@@ -125,6 +127,36 @@ jobs:
             echo "  waf/waf-offenders.txt not present, skipping"
           fi
 
+          # Authenticated source: AbuseIPDB blacklist (needs API key header, so it
+          # cannot live in the SOURCES array). Skipped cleanly if the secret is unset.
+          # confidenceMinimum is a subscriber feature; on a free key it degrades to
+          # the default of 100 without error. Free tier caps the list at 10,000.
+          ABUSE_COUNT=0
+          if [ -n "${ABUSEIPDB_API_KEY:-}" ]; then
+            echo "Fetching abuseipdb from api.abuseipdb.com..."
+            abuse_tmp="$(mktemp)"
+            abuse_code=$(curl -sSL --max-time 120 \
+              -G "https://api.abuseipdb.com/api/v2/blacklist" \
+              -d confidenceMinimum=90 -d limit=10000 -d plaintext \
+              -H "Key: ${ABUSEIPDB_API_KEY}" \
+              -H "Accept: text/plain" \
+              -w '%{http_code}' -o "$abuse_tmp" 2>/dev/null) || abuse_code="curl_fail"
+            echo "  http=${abuse_code} bytes=$(wc -c < "$abuse_tmp")"
+            if [ "$abuse_code" = "200" ]; then
+              parse_bare "$abuse_tmp" > "${abuse_tmp}.clean"
+              ABUSE_COUNT=$(wc -l < "${abuse_tmp}.clean")
+              cat "${abuse_tmp}.clean" >> "$COMBINED"
+              echo "  -> abuseipdb: $ABUSE_COUNT entries"
+            else
+              echo "::warning::AbuseIPDB fetch failed (http=${abuse_code}), skipping"
+              ABUSE_COUNT="FAIL"
+            fi
+          else
+            echo "  ABUSEIPDB_API_KEY not set, skipping abuseipdb"
+          fi
+          ABUSE_NUM=0
+          if [ "$ABUSE_COUNT" != "FAIL" ]; then ABUSE_NUM=$ABUSE_COUNT; fi
+
           OUT_FILE="threat/combined-threat-ips.txt"
 
           python3 - "$COMBINED" > "$OUT_FILE" <<'PY'
@@ -152,7 +184,7 @@ jobs:
             name="${entry%%|*}"
             RAW_TOTAL=$((RAW_TOTAL + ${SOURCE_COUNTS[$name]:-0}))
           done
-          RAW_TOTAL=$((RAW_TOTAL + WAF_COUNT))
+          RAW_TOTAL=$((RAW_TOTAL + WAF_COUNT + ABUSE_NUM))
           SAVED=$((RAW_TOTAL - FINAL_COUNT))
 
           REPO_RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/threat"
@@ -171,6 +203,7 @@ jobs:
               count="${SOURCE_COUNTS[$name]:-FAIL}"
               echo "| ${name} | ${count} | \`${url}\` |"
             done
+            echo "| abuseipdb (API key) | ${ABUSE_COUNT} | \`https://api.abuseipdb.com/api/v2/blacklist\` |"
             echo "| waf_offenders (local) | ${WAF_COUNT} | \`waf/waf-offenders.txt\` |"
             echo
             echo "## Output"
