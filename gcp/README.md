@@ -6,11 +6,11 @@ Auto-generated from Google's published [Google Cloud IP ranges](https://www.gsta
 
 | Source | Raw | Aggregated | EDL URL |
 | ------ | --- | ---------- | ------- |
-| gstatic cloud.json | 1127 | 485 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/gcp/gcp-ranges.txt` |
+| gstatic cloud.json | 1107 | 479 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/gcp/gcp-ranges.txt` |
 
 ## Stats
 
-- **Last updated UTC:** 2026-10-09 15:30:23
-- **Google syncToken:** 1791554931883
-- **Total prefixes (raw):** 1127
-- **Total prefixes (aggregated):** 485
+- **Last updated UTC:** 2026-10-10 14:37:29
+- **Google syncToken:** 1791619589270
+- **Total prefixes (raw):** 1107
+- **Total prefixes (aggregated):** 479
