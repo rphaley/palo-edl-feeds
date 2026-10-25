@@ -14,9 +14,9 @@ Plain text, one IPv4 address per line, preceded by a `#`-prefixed header block g
 | Window | 14 days rolling, best effort (bounded by log retention) |
 | Push cadence | Hourly, by the edge proxy directly |
 | Consumed by | [Combined Threat IPs](../threat/) feed, daily at 04:30 UTC |
-| Current entries | 173 |
-| Proxy last updated | 2026-10-24 09:00:27 UTC |
-| README last computed | 2026-10-24 09:00:34 UTC |
+| Current entries | 172 |
+| Proxy last updated | 2026-10-25 09:00:28 UTC |
+| README last computed | 2026-10-25 09:00:36 UTC |
 
 ## Notes
 
