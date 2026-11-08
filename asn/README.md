@@ -7,10 +7,10 @@ Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated t
 | ASN | Organization | Raw | Aggregated | EDL URL |
 | --- | ------------ | --- | ---------- | ------- |
 | AS63949 | AKAMAI-LINODE-AP - Akamai Connected Cloud | 453 | 177 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS63949.txt` |
-| AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC | 898 | 185 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS14061.txt` |
-| AS20473 | AS-VULTR - The Constant Company, LLC | 2781 | 1560 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
-| AS24940 | HETZNER-AS Hetzner Online GmbH | 98 | 87 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS24940.txt` |
-| AS16276 | OVH OVH SAS | 816 | 668 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS16276.txt` |
+| AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC | 899 | 185 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS14061.txt` |
+| AS20473 | AS-VULTR - The Constant Company, LLC | 2787 | 1561 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
+| AS24940 | HETZNER-AS Hetzner Online GmbH | 99 | 87 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS24940.txt` |
+| AS16276 | OVH OVH SAS | 818 | 670 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS16276.txt` |
 | AS51167 | CONTABO Contabo GmbH | 591 | 262 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS51167.txt` |
 | AS9009 | M247 M247 Europe SRL | 5277 | 3007 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS9009.txt` |
 | AS53667 | PONYNET - FranTech Solutions | 75 | 50 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS53667.txt` |
@@ -19,6 +19,6 @@ Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated t
 
 ## Stats
 
-- **Last updated UTC:** 2026-11-07 14:38:16
-- **Total prefixes (raw):** 16026
-- **Total prefixes (aggregated):** 9230
+- **Last updated UTC:** 2026-11-08 14:43:59
+- **Total prefixes (raw):** 16036
+- **Total prefixes (aggregated):** 9233
