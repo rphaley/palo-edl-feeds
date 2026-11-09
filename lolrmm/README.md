@@ -6,7 +6,7 @@ Use as a Palo Alto Domain-type External Dynamic List to block or alert on RMM to
 
 ## Stats
 
-- **Last updated UTC:** 2026-11-08 15:49:20
+- **Last updated UTC:** 2026-11-09 19:33:19
 - **Domain count:** 465
 
 ## EDL URL
