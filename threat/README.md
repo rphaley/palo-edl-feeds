@@ -6,20 +6,20 @@ Combined and deduplicated threat IP feeds from multiple sources. Adjacent CIDRs 
 
 | Source | Raw Count | URL |
 | ------ | --------- | --- |
-| emerging_threats | 1786 | `https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt` |
-| emerging_threats_compromised | 511 | `https://rules.emergingthreats.net/blockrules/compromised-ips.txt` |
+| emerging_threats | 1784 | `https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt` |
+| emerging_threats_compromised | 506 | `https://rules.emergingthreats.net/blockrules/compromised-ips.txt` |
 | cins_score | 15000 | `https://cinsscore.com/list/ci-badguys.txt` |
-| blocklist_de | 24052 | `https://opendbl.net/lists/blocklistde-all.list` |
+| blocklist_de | 23610 | `https://opendbl.net/lists/blocklistde-all.list` |
 | spamhaus_drop | 1763 | `https://www.spamhaus.org/drop/drop.txt` |
 | dshield_block | 20 | `https://isc.sans.edu/block.txt` |
-| binary_defense | 1920 | `https://www.binarydefense.com/banlist.txt` |
+| binary_defense | 624 | `https://www.binarydefense.com/banlist.txt` |
 | abuseipdb (API key) | 10000 | `https://api.abuseipdb.com/api/v2/blacklist` |
-| waf_offenders (local) | 89 | `waf/waf-offenders.txt` |
+| waf_offenders (local) | 95 | `waf/waf-offenders.txt` |
 
 ## Output
 
 - **Combined EDL URL:** `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/threat/combined-threat-ips.txt`
-- **Final entry count:** 32699
-- **Raw total (sum of all sources):** 55141
-- **Slots saved vs. running them separately:** 22442
-- **Last updated UTC:** 2026-11-09 13:07:31
+- **Final entry count:** 32397
+- **Raw total (sum of all sources):** 53402
+- **Slots saved vs. running them separately:** 21005
+- **Last updated UTC:** 2026-11-10 12:49:29
