@@ -10,7 +10,7 @@ Auto-generated from Google's published [Google Cloud IP ranges](https://www.gsta
 
 ## Stats
 
-- **Last updated UTC:** 2026-11-20 17:09:14
-- **Google syncToken:** 1795183729267
+- **Last updated UTC:** 2026-11-21 16:19:54
+- **Google syncToken:** 1795270075794
 - **Total prefixes (raw):** 1153
 - **Total prefixes (aggregated):** 495
