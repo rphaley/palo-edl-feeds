@@ -6,19 +6,19 @@ Auto-generated from RIPEstat announced prefixes. Adjacent CIDRs are aggregated t
 
 | ASN | Organization | Raw | Aggregated | EDL URL |
 | --- | ------------ | --- | ---------- | ------- |
-| AS63949 | AKAMAI-LINODE-AP - Akamai Connected Cloud | 453 | 177 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS63949.txt` |
+| AS63949 | AKAMAI-LINODE-AP - Akamai Connected Cloud | 454 | 178 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS63949.txt` |
 | AS14061 | DIGITALOCEAN-ASN - DigitalOcean, LLC | 902 | 187 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS14061.txt` |
-| AS20473 | AS-VULTR - The Constant Company, LLC | 5284 | 2833 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
+| AS20473 | AS-VULTR - The Constant Company, LLC | 5400 | 2797 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS20473.txt` |
 | AS24940 | HETZNER-AS Hetzner Online GmbH | 99 | 88 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS24940.txt` |
-| AS16276 | OVH OVH SAS | 805 | 661 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS16276.txt` |
-| AS51167 | CONTABO Contabo GmbH | 611 | 272 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS51167.txt` |
-| AS9009 | M247 M247 Europe SRL | 5295 | 3009 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS9009.txt` |
+| AS16276 | OVH OVH SAS | 810 | 666 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS16276.txt` |
+| AS51167 | CONTABO Contabo GmbH | 612 | 273 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS51167.txt` |
+| AS9009 | M247 M247 Europe SRL | 5298 | 3010 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS9009.txt` |
 | AS53667 | PONYNET - FranTech Solutions | 112 | 52 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS53667.txt` |
-| AS212238 | CDNEXT Datacamp Limited | 4573 | 3081 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS212238.txt` |
+| AS212238 | CDNEXT Datacamp Limited | 4582 | 3082 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS212238.txt` |
 | AS8560 | IONOS-AS IONOS SE | 548 | 177 | `https://raw.githubusercontent.com/rphaley/palo-edl-feeds/main/asn/AS8560.txt` |
 
 ## Stats
 
-- **Last updated UTC:** 2026-11-25 18:23:16
-- **Total prefixes (raw):** 18682
-- **Total prefixes (aggregated):** 10537
+- **Last updated UTC:** 2026-11-26 18:05:02
+- **Total prefixes (raw):** 18817
+- **Total prefixes (aggregated):** 10510
